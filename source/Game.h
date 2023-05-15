@@ -1,6 +1,12 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+#include "common.h"
+
+#include "ResourceManager.h"
+#include "Shader.h"
+#include "SpriteRenderer.h"
+
 // Represents the current state of the game
 enum GameState {
     GAME_ACTIVE,
@@ -64,6 +70,9 @@ private:
     GameState m_State;	
     bool m_Keys[1024];
     unsigned int m_Width, m_Height;
+
+    // renderer
+    std::unique_ptr<SpriteRenderer> m_Renderer;
 };
 
 #endif // !_GAME_H_

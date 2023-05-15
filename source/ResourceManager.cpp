@@ -3,17 +3,25 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <filesystem>
 
 #include "stb_image/stb_image.h"
 
 // Instantiate static variables
 std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Shader>       ResourceManager::Shaders;
+std::string ResourceManager::m_FullPath = std::filesystem::current_path().string() + "/";
 
-
-Shader ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name)
+Shader ResourceManager::LoadShader(const std::string& vShaderFile, const std::string& fShaderFile, const std::string& gShaderFile, std::string name)
 {
-    Shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
+
+    std::string _vShaderFile = m_FullPath + vShaderFile;
+    std::string _fShaderFile = m_FullPath + fShaderFile;
+    std::string _gShaderFile = "";
+    if (!gShaderFile.empty())
+        std::string _gShaderFile = m_FullPath + gShaderFile;
+
+    Shaders[name] = loadShaderFromFile(_vShaderFile.c_str(), _fShaderFile.c_str(), !_gShaderFile.empty()? _gShaderFile.c_str() : nullptr);
     return Shaders[name];
 }
 
@@ -22,9 +30,11 @@ Shader ResourceManager::GetShader(std::string name)
     return Shaders[name];
 }
 
-Texture2D ResourceManager::LoadTexture(const char *file, bool alpha, std::string name)
+Texture2D ResourceManager::LoadTexture(const std::string& file, bool alpha, std::string name)
 {
-    Textures[name] = loadTextureFromFile(file, alpha);
+    std::string _tex = m_FullPath + file;
+    
+    Textures[name] = loadTextureFromFile(_tex.c_str(), alpha);
     return Textures[name];
 }
 

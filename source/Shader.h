@@ -1,15 +1,9 @@
 #ifndef _SHADER_H_
 #define _SHADER_H_
 
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "common.h"
 
 #include <string>
-
-// General purpose shader object. Compiles from file, generates
-// compile/link-time error messages and hosts several utility
-// functions for easy management.
 
 class Shader
 {
