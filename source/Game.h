@@ -6,13 +6,15 @@
 #include "ResourceManager.h"
 #include "Shader.h"
 #include "SpriteRenderer.h"
+#include "GameLevel.h"
+
 
 // Represents the current state of the game
 enum GameState {
     GAME_ACTIVE,
     GAME_MENU,
     GAME_WIN
-}; 
+};
 
 class Game
 {
@@ -63,6 +65,26 @@ public:
     inline constexpr bool& Keys(const unsigned int& key) {
         return this->m_Keys[key];
     }
+
+    inline const SpriteRenderer& Renderer() const {
+        return *this->m_Renderer;
+    }
+
+    inline SpriteRenderer& Renderer() {
+        return *this->m_Renderer;
+    }
+
+    inline constexpr const unsigned int& CurrentLevel() const {
+        return this->m_CurrentLevel;
+    }
+
+    inline constexpr unsigned int& CurrentLevel() {
+        return this->m_CurrentLevel;
+    }
+
+    inline constexpr const GameObject& Player() const {
+        return *this->m_Player;
+    }
     
 
 private:
@@ -72,7 +94,14 @@ private:
     unsigned int m_Width, m_Height;
 
     // renderer
-    std::unique_ptr<SpriteRenderer> m_Renderer;
+    std::shared_ptr<SpriteRenderer> m_Renderer;
+
+    // levels
+    std::vector<GameLevel> m_Levels;
+    unsigned int m_CurrentLevel;
+
+    // player
+    std::shared_ptr<GameObject> m_Player;
 };
 
 #endif // !_GAME_H_
