@@ -2,11 +2,19 @@
 #include "config.h"
 
 // Player data
+// ------------
 // TODO: move this to a player class if needed
 // Initial size of the player paddle
 static const glm::vec2 PLAYER_SIZE(100.0f, 20.0f);
 // Initial velocity of the player paddle
 static const float PLAYER_VELOCITY(500.0f);
+
+// Ball data
+// ---------
+// Initial velocity of the Ball
+const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
+// Radius of the ball object
+const float BALL_RADIUS = 12.5f;
 
 Game::Game(unsigned int width, unsigned int height)
     : m_State(GAME_ACTIVE), m_Keys(), m_Width(width), m_Height(height)
@@ -50,7 +58,7 @@ void Game::Init() {
     this->m_CurrentLevel = 0;
 
     // player setup
-    GameObjectConfig playerConfig;
+    GameObjectConfig playerConfig{};
     playerConfig.Position = glm::vec2(this->Width() / 2.0f - PLAYER_SIZE.x / 2.0f, 
         this->Height() - PLAYER_SIZE.y);
     playerConfig.Size = PLAYER_SIZE;
@@ -58,6 +66,18 @@ void Game::Init() {
     playerConfig.Color = glm::vec3(1.0f);
     playerConfig.Sprite = ResourceManager::GetTexture("paddle");
     this->m_Player = std::make_shared<GameObject>(playerConfig);
+
+    // ball setup
+    BallObjectConfig ballConfig{};
+    ballConfig.Radius = BALL_RADIUS;
+    ballConfig.Stuck = true;
+    ballConfig.Position = this->m_Player->Position() + glm::vec2(this->m_Player->Size().x / 2.0f - BALL_RADIUS, 
+        -BALL_RADIUS * 2.0f);
+    ballConfig.Size = glm::vec2(BALL_RADIUS * 2.0f);
+    ballConfig.Velocity = INITIAL_BALL_VELOCITY;
+    ballConfig.Color = glm::vec3(1.0f);
+    ballConfig.Sprite = ResourceManager::GetTexture("face");
+    this->m_Ball = std::make_shared<BallObject>(ballConfig);
 }
 
 void Game::ProcessInput(float dt) {
@@ -67,19 +87,27 @@ void Game::ProcessInput(float dt) {
         // move playerboard
         if (this->m_Keys[GLFW_KEY_A])
         {
-            if (m_Player->Position().x >= 0.0f)
+            if (m_Player->Position().x >= 0.0f) {
                 m_Player->Position().x -= velocity;
+                if (m_Ball->Stuck())
+                    m_Ball->Position().x -= velocity;
+            }
         }
         if (this->m_Keys[GLFW_KEY_D])
         {
-            if (m_Player->Position().x <= this->m_Width - m_Player->Size().x)
+            if (m_Player->Position().x <= this->m_Width - m_Player->Size().x) {
                 m_Player->Position().x += velocity;
+                if (m_Ball->Stuck())
+                    m_Ball->Position().x += velocity;
+            }
         }
+        if (this->m_Keys[GLFW_KEY_SPACE])
+            m_Ball->Stuck() = false;
     }
 }
 
 void Game::Update(float dt) {
-    UNUSED(dt);
+    m_Ball->Move(dt, this->m_Width);
 }
 
 void Game::Render()
@@ -87,11 +115,17 @@ void Game::Render()
     if(this->m_State == GAME_ACTIVE)
     {
         // draw background
-        m_Renderer->DrawSprite(ResourceManager::GetTexture("background"), 
-            glm::vec2(0.0f, 0.0f), glm::vec2(this->Width(), this->Height()), 0.0f
-        );
+        m_Renderer->DrawSprite(
+            ResourceManager::GetTexture("background"), 
+            glm::vec2(0.0f, 0.0f), 
+            glm::vec2(this->Width(), 
+            this->Height()), 
+            0.0f);
+        
         // draw level
         this->m_Levels[this->m_CurrentLevel].Draw(*m_Renderer);
+
+        m_Ball->Draw(*m_Renderer);
     }
 
     m_Player->Draw(*m_Renderer);  

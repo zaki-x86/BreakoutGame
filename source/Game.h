@@ -7,6 +7,9 @@
 #include "Shader.h"
 #include "SpriteRenderer.h"
 #include "GameLevel.h"
+#include "GameObject.h"
+#include "BallObject.h"
+
 
 
 // Represents the current state of the game
@@ -82,8 +85,12 @@ public:
         return this->m_CurrentLevel;
     }
 
-    inline constexpr const GameObject& Player() const {
+    inline const GameObject& Player() const {
         return *this->m_Player;
+    }
+
+    inline const BallObject& Ball() const {
+        return *this->m_Ball;
     }
     
 
@@ -102,6 +109,9 @@ private:
 
     // player
     std::shared_ptr<GameObject> m_Player;
+
+    //ball
+    std::shared_ptr<BallObject> m_Ball;
 };
 
 #endif // !_GAME_H_

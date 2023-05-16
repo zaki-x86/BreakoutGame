@@ -8,11 +8,14 @@ The `Game` class contains all relevant render and gameplay code. The idea of suc
 - Update all gameplay events (like player/ball movement) in the `Update` function. This function is also called every frame.
 - Last, we can render the game by calling `Render`. Note that we split the movement logic from the render logic.
 
+The game objective is to let the ball collide with all the bricks until each of the destroyable bricks are destroyed, but this all within the condition that the ball is not allowed to reach the bottom edge of the screen.
+
 ## Game Components
 
 - `Game` class: contains all relevant render and gameplay code.
 - [`GameObject`](GameObject.md) class: encapsulates all game object logic.
 - [`GameLevel`](GameLevel.md) class: is a container for bricks and implements the logic for loading levels.
+- [`BallObject`](BallObject.md) class: encapsulates all ball logic.
 
 ## Game States
 
@@ -54,3 +57,9 @@ The current active level can be accessed and modified via `CurrentLevel()` funct
 The paddle is controlled by the player and is used to hit the ball back up towards the bricks. The paddle is the only game object that is not destroyed when hit by the ball. The paddle is controlled by the player using the `A` and `D` keys.
 
 The paddle object can be accessed via `Player()` function.
+
+## Game Ball
+
+The ball is the game object that is used to hit the bricks. The ball is destroyed when it hits the bottom edge of the screen. The ball is controlled by the player using the `SPACE` key.
+
+The ball object can be accessed via `Ball()` function.
