@@ -30,8 +30,9 @@ void GameLevel::Load(const char *file, unsigned int levelWidth, unsigned int lev
 void GameLevel::Draw(SpriteRenderer &renderer)
 {
     for (GameObject &tile : this->m_Bricks)
-        if (!tile.Destroyed())
+        if (!tile.Destroyed()) {
             tile.Draw(renderer);
+        }
 }
 
 bool GameLevel::IsCompleted()

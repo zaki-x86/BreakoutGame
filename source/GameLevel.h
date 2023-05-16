@@ -20,9 +20,9 @@ public:
 
     bool IsCompleted();
 
-    const GameObject* data() const { return m_Bricks.data(); }
+    const std::vector<GameObject>& Bricks() const { return m_Bricks; }
 
-    GameObject* data() { return m_Bricks.data(); }
+    std::vector<GameObject>& Bricks() { return m_Bricks; }
 
 private:
     void init(std::vector<std::vector<unsigned int>> tileData, 
