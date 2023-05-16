@@ -14,7 +14,7 @@ struct GameObjectConfig {
   glm::vec3 Color;
   glm::vec2 Velocity;
   float Rotation = 0.0f;
-  bool IsSolid;
+  bool IsSolid = false;
   bool Destroyed = false;
 };
 
@@ -89,11 +89,11 @@ public:
         return this->m_Config.IsSolid;
     }
 
-    inline constexpr const bool &Destroyed() const {
+    inline const bool &Destroyed() const {
         return this->m_Config.Destroyed;
     }
 
-    inline constexpr bool &Destroyed() {
+    inline bool &Destroyed() {
         return this->m_Config.Destroyed;
     }
 
