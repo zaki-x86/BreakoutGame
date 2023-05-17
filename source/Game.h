@@ -9,6 +9,7 @@
 #include "ResourceManager.h"
 #include "Shader.h"
 #include "SpriteRenderer.h"
+#include "ParticleGenerator.h"
 
 // Represents the current state of the game
 enum GameState { GAME_ACTIVE, GAME_MENU, GAME_WIN };
@@ -86,6 +87,9 @@ private:
 
   // ball
   std::shared_ptr<BallObject> m_Ball;
+
+  // particle generator
+  std::shared_ptr<ParticleGenerator> m_ParticleGenerator;
 };
 
 #endif // !_GAME_H_

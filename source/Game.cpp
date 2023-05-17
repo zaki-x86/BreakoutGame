@@ -28,11 +28,13 @@ Game::~Game() {}
 
 void Game::Init() {
     ResourceManager::LoadShader("assets/shaders/sprite.vs", "assets/shaders/sprite.fs", "", "sprite");
+    ResourceManager::LoadShader("assets/shaders/particle.vs", "assets/shaders/particle.fs", "", "particle");
 
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width()), 
         static_cast<float>(this->Height()), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+    ResourceManager::GetShader("particle").Use().SetMatrix4("projection", projection);
 
     m_Renderer = std::make_shared<SpriteRenderer>(ResourceManager::GetShader("sprite"));
     
@@ -42,6 +44,7 @@ void Game::Init() {
     ResourceManager::LoadTexture("assets/textures/block.png", false, "block");
     ResourceManager::LoadTexture("assets/textures/block_solid.png", false, "block_solid");
     ResourceManager::LoadTexture("assets/textures/paddle.png", true, "paddle");
+    ResourceManager::LoadTexture("assets/textures/particle.png", true, "particle");
 
     // load levels
     GameLevel one;
@@ -80,6 +83,10 @@ void Game::Init() {
     ballConfig.Color = glm::vec3(1.0f);
     ballConfig.Sprite = ResourceManager::GetTexture("face");
     this->m_Ball = std::make_shared<BallObject>(ballConfig);
+
+    // particle generator setup
+    m_ParticleGenerator = std::make_shared<ParticleGenerator>(ResourceManager::GetShader("particle"), 
+        ResourceManager::GetTexture("particle"), 500);
 }
 
 void Game::ProcessInput(float dt) {
@@ -119,6 +126,7 @@ void Game::ProcessCollisions() {
                 // destroy block if not solid
                 if (!box.IsSolid())
                     box.Destroyed() = true;
+
                 // collision resolution
                 Direction dir = std::get<1>(collision);
                 glm::vec2 diff_vector = std::get<2>(collision);
@@ -165,6 +173,7 @@ void Game::ProcessCollisions() {
 void Game::Update(float dt) {
     m_Ball->Move(dt, this->m_Width);
     this->ProcessCollisions();
+    m_ParticleGenerator->Update(dt, *m_Ball, 2, glm::vec2(m_Ball->Radius() / 2.0f));
     if (m_Ball->Position().y >= this->Height()) // did ball reach bottom edge?
     {
         this->ResetLevel();
@@ -186,6 +195,7 @@ void Game::Render()
         
         this->m_Levels[this->m_CurrentLevel].Draw(*m_Renderer);
         m_Ball->Draw(*m_Renderer);
+        m_ParticleGenerator->Draw();
         m_Player->Draw(*m_Renderer);  
     }
 
